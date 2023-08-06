@@ -24,6 +24,9 @@
             <div class="col-2">
                 <h3>F&deg; {{ fe }}</h3>
             </div>
+            <div class="col-2">
+                <h2>{{ time }}</h2>
+            </div>
         </div>
     </div>
 </template>
@@ -39,7 +42,8 @@ export default {
             country: null,
             small: null,
             ce: null,
-            fe: null
+            fe: null,
+            time: null
         }
     },
     methods: {
@@ -54,10 +58,29 @@ export default {
                 this.image = 'https:' + data.current.condition.icon
                 this.country = data.location.name + ', ' + data.location.country
                 this.small = data.location.tz_id
+                let time = data.location.localtime.split(' ')[1]
+                this.time = time
                 this.ce = data.current.temp_c
                 this.fe = data.current.temp_f
                 this.$refs.enable.classList.remove('disable')
             })
+            setInterval(() => {
+                let url = "https://api.weatherapi.com/v1/current.json?key=5579bd6431aa4b8583895926232907&q="
+                let country = this.$refs.name.value
+                fetch(url + country)
+                .then((response) => {
+                    return response.json()
+                })
+                .then((data) => {
+                    this.image = 'https:' + data.current.condition.icon
+                    this.country = data.location.name + ', ' + data.location.country
+                    this.small = data.location.tz_id
+                    let time = data.location.localtime.split(' ')[1]
+                    this.time = time
+                    this.ce = data.current.temp_c
+                    this.fe = data.current.temp_f
+                })
+            }, 10000)
         }
     }
 }
